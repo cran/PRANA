@@ -1,0 +1,110 @@
+---
+title: "A User Manual for PRANA"
+author: "Seungjun Ahn"
+date: "March 7th, 2023"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{UserManualPRANA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+We introduce a Pseudo-value Regression Approach for Network Analysis (PRANA) [1]. To our knowledge, this is the first attempt of utilizing a regression modeling for the differential network (DN) analysis by collective gene expression levels under two experimental conditions ($\textit{e.g.}$ 'current' vs. 'non-current smokers' or 'high-risk' vs. 'low-risk'). We start from the mutual information (MI) criteria, followed by pseudo-value calculations, which are then entered into a robust regrssion model.
+
+```{r, include = FALSE}
+options(rmarkdown.html_vignette.check_title = FALSE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Requirements
+Please install these R packages prior to use SOHPIE-DNA.
+```{r}
+# library(dnapath) # To obtain mutual information (MI) estimate via ARACNE.
+# library(dplyr) 
+# library(parallel) # To use mclapply() when reestimating the association matrix.
+# library(robustbase) # To fit a robust regression
+# library(minet) # To estimate network via ARACNE
+```
+
+```{r setup}
+library(PRANA)
+```
+
+### Example: Load the COPDGene study data from PRANA R package:
+In the original article [1], a real-data analysis was performed to showcase the utility of PRANA. This contains clinical and expression data for 406 samples and 28 COPD-related genes that were highlighted in a recent genome-wide association study [2]. The full data is available from the Gene Expression Database with accession number GSE158699 [3].
+```{r}
+data(combinedCOPDdat_RGO) # A complete data containing expression and clinical data.
+```
+
+
+### Data processing for the example data from COPDGene study:
+The main variable of our interest in this analysis is the current smoking status. We obtain the indices of subjects who are 'current' vs. 'non-current smokers.' These indices are used to dichotomize expression dataset into 'current (Group B)' and 'non-current smokers (Group A).' This is important as the we estimate the group-specific $p \times p$ association matrices. 
+```{r}
+# A gene expression data part of the downloaded data.
+rnaseqdat <- combinedCOPDdat_RGO[ , 8:ncol(combinedCOPDdat_RGO)]
+rnaseqdat <- as.data.frame(apply(rnaseqdat, 2, as.numeric))
+
+# A clinical data with additional covariates sorted by current smoking groups:
+# The first column is ID, so do not include.
+phenodat <- combinedCOPDdat_RGO[order(combinedCOPDdat_RGO$currentsmoking), 2:7]
+
+# Indices of non-current smoker (namely Group A)
+index_grpA <- which(combinedCOPDdat_RGO$currentsmoking == 0)
+# Indices of current smoker (namely Group B)
+index_grpB <- which(combinedCOPDdat_RGO$currentsmoking == 1)
+```
+
+### Apply the PRANA:
+Once the data processing is done, we are off to apply the PRANA. In `PRANA` function, please make sure you specify the expression and clinical data separately. Additionally, you will need to provide the indices for each group of a binary indicator variable that is deemed as a main predictor variable.
+```{r}
+PRANAres <- PRANA(RNASeqdat = rnaseqdat, clindat = phenodat, groupA = index_grpA, groupB = index_grpB)
+```
+
+### Some supporting features after the use of PRANA:
+In this package, there are some additional R functions that can help you locating the name of genes that are significantly differentially connected (DC) and names and adjusted p-values via the empirical Bayes adjustment [4] for all variables and for a specific variable.
+```{r}
+# This is useful when we want to create a table with adjusted p-values only.
+adjpval(PRANAres)
+```
+
+Back to the description of the original article by Ahn $\textit{et al.}$, the main interest is in the current smoking status to declare whether a gene is DC between current and non-current smokers at the user-specified significance level. Thus, we subset the vector of p-values for current smoking status from the `adjpvaltab` object, aka an object with adjusted p-values and gene names using `adjpval` function above.
+
+```{r}
+# Create an object to keep the table with adjusted p-values using adjpval() function.
+adjptab <- adjpval(PRANAres)
+```
+
+`adjpval_specific_var` is a handy function to retrieve adjusted p-values with gene names for a single variable of interest.
+```{r}
+# NOTE: Please do NOT forget to provide a name of variable with the quotation marks!
+adjpval_specific_var(adjptab = adjptab, varname = "currentsmoking")
+```
+
+If you would like to quickly know which genes are significantly DC for your main binary grouping variable, please use `sigDCGtab` to proceed. This will return a table with adjusted p-values and gene names.
+```{r}
+# NOTE: Please do NOT forget to provide a name of variable with the quotation marks!
+sigDCGtab <- sigDCGtab(adjptab = adjptab, groupvar = "currentsmoking", alpha = 0.05)
+sigDCGtab
+```
+
+Lastly, a function below, called `sigDCGnames`, will be useful when you just want to return the names of the significantly DC genes from PRANA at the 0.05 significance level.
+```{r}
+# NOTE: Please do NOT forget to provide a name of variable with the quotation marks!
+sigDCGnames <- sigDCGnames(adjptab = adjptab, groupvar = "currentsmoking", alpha = 0.05)
+sigDCGnames
+```
+
+\newpage
+## References
+[1] Ahn S, Grimes T, Datta S. (2023). A pseudo-value regression approach for differential network analysis of co-expression data. $\textit{BMC Bioinformatics}$. **24**(1), 8.
+
+[2] Sakornsakolpat P, Prokopenko D, Lamontagne M, and et al. (2019). Genetic landscape of chronic obstructive pulmonary disease identifies heterogeneous cell-type and phenotype associations. $\textit{Nature Genetics}$, **51**(3), 494–505. 
+
+[3] Wang Z, Masoomi A, Xu Z, and et al. (2021). Improved prediction of smoking status via isoform-aware RNA-seq deep learning models. $\textit{PLoS Computational Biology}$, **17**(10), e1009433. 
+
+[4] Datta S, Datta S. (2005). Empirical Bayes screening of many p-values with applications to microarray studies. $\textit{Bioinformatics}$, **21**(9), 1987–1994. 
+
+
