@@ -8,7 +8,7 @@
 #'
 #' @usage data(combinedCOPDdat_RGO)
 #'
-#' @format `combinedCOPDdat_RGO`
+#' @format combinedCOPDdat_RGO
 #'
 #' @keywords Application data used in Ahn et al. BMC Bioinformatics. 2023.
 #'

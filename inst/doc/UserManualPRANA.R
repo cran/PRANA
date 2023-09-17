@@ -12,6 +12,12 @@ knitr::opts_chunk$set(
 # library(robustbase) # To fit a robust regression
 # library(minet) # To estimate network via ARACNE
 
+# Please run the following lines to install minet package 
+# from Bioconductor in your R console:
+#if (!require("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install("minet")
+
 ## ----setup--------------------------------------------------------------------
 library(PRANA)
 
@@ -56,4 +62,7 @@ sigDCGtab
 # NOTE: Please do NOT forget to provide a name of variable with the quotation marks!
 sigDCGnames <- sigDCGnames(adjptab = adjptab, groupvar = "currentsmoking", alpha = 0.05)
 sigDCGnames
+
+## -----------------------------------------------------------------------------
+dnapath::rename_genes(sigDCGnames, to = "symbol", species = "human")
 

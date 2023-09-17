@@ -119,10 +119,10 @@ PRANA <- function(RNASeqdat, clindat, groupA, groupB) {
 
         }
 
-        beta_hat = as.data.frame(bind_rows(beta_hat))  # Convert list into data.frame
+        beta_hat = as.data.frame(dplyr::bind_rows(beta_hat))  # Convert list into data.frame
         rownames(beta_hat) <- colnames(RNASeqdat) # Map the gene names to the data.frame for betahats
 
-        p_values = as.data.frame(bind_rows(p_values))  # Convert list into data.frame
+        p_values = as.data.frame(dplyr::bind_rows(p_values))  # Convert list into data.frame
         rownames(p_values) <- colnames(RNASeqdat) # Map the gene names to the data.frame for p-values
 
         # Compute the adjusted p-values via empirical Bayes approach proposed by the reference below:

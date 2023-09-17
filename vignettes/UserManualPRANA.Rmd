@@ -1,7 +1,7 @@
 ---
 title: "A User Manual for PRANA"
 author: "Seungjun Ahn"
-date: "March 7th, 2023"
+date: "September 15th, 2023"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{UserManualPRANA}
@@ -20,13 +20,19 @@ knitr::opts_chunk$set(
 ```
 
 ## Requirements
-Please install these R packages prior to use SOHPIE-DNA.
+Please install these R packages prior to use PRANA. Note that minet package is available in Bioconductor. Please see below for further instruction.
 ```{r}
 # library(dnapath) # To obtain mutual information (MI) estimate via ARACNE.
 # library(dplyr) 
 # library(parallel) # To use mclapply() when reestimating the association matrix.
 # library(robustbase) # To fit a robust regression
 # library(minet) # To estimate network via ARACNE
+
+# Please run the following lines to install minet package 
+# from Bioconductor in your R console:
+#if (!require("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install("minet")
 ```
 
 ```{r setup}
@@ -97,6 +103,10 @@ sigDCGnames <- sigDCGnames(adjptab = adjptab, groupvar = "currentsmoking", alpha
 sigDCGnames
 ```
 
+As an additional step, we can use `rename_genes` function from `dnapath` dependency package to rename Entrez gene IDs into gene symbols.
+```{r}
+dnapath::rename_genes(sigDCGnames, to = "symbol", species = "human")
+```
 \newpage
 ## References
 [1] Ahn S, Grimes T, Datta S. (2023). A pseudo-value regression approach for differential network analysis of co-expression data. $\textit{BMC Bioinformatics}$. **24**(1), 8.

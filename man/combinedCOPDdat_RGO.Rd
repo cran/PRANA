@@ -5,7 +5,7 @@
 \alias{combinedCOPDdat_RGO}
 \title{Chronic Obstructive Pulmonary Disease (COPD) data}
 \format{
-`combinedCOPDdat_RGO`
+combinedCOPDdat_RGO
 }
 \usage{
 data(combinedCOPDdat_RGO)
