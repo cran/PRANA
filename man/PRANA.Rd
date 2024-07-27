@@ -26,7 +26,7 @@ A list containing three data frame objects that summarize the results of PRANA. 
 }
 \description{
 A pseudo-value regression approach for differential network analysis
-    that adjusts for additional covariates (PRANA)
+    that adjusts for additional covariates (PRANA).
 }
 \examples{
 data(combinedCOPDdat_RGO) # A complete data containing expression and clinical data.

@@ -336,25 +336,24 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">A User Manual for PRANA</h1>
 <h4 class="author">Seungjun Ahn</h4>
-<h4 class="date">September 15th, 2023</h4>
+<h4 class="date">July 22nd, 2024 (Version 1.0.5)</h4>
 
 
 
 <p>We introduce a Pseudo-value Regression Approach for Network Analysis (PRANA) [1]. To our knowledge, this is the first attempt of utilizing a regression modeling for the differential network (DN) analysis by collective gene expression levels under two experimental conditions (<span class="math inline">\(\textit{e.g.}\)</span> ‘current’ vs. ‘non-current smokers’ or ‘high-risk’ vs. ‘low-risk’). We start from the mutual information (MI) criteria, followed by pseudo-value calculations, which are then entered into a robust regrssion model.</p>
 <div id="requirements" class="section level2">
 <h2>Requirements</h2>
-<p>Please install these R packages prior to use PRANA. Note that minet package is available in Bioconductor. Please see below for further instruction.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># library(dnapath) # To obtain mutual information (MI) estimate via ARACNE.</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="co"># library(dplyr) </span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># library(parallel) # To use mclapply() when reestimating the association matrix.</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co"># library(robustbase) # To fit a robust regression</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co"># library(minet) # To estimate network via ARACNE</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># Please run the following lines to install minet package </span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co"># from Bioconductor in your R console:</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#if (!require(&quot;BiocManager&quot;, quietly = TRUE))</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#    install.packages(&quot;BiocManager&quot;)</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#BiocManager::install(&quot;minet&quot;)</span></span></code></pre></div>
+<p>Please install these R packages prior to use PRANA. Note that minet package is available in Bioconductor. Please see below for further instruction. Of important note (as of July 2024), dnapath R package is archived in CRAN as of May 2024, which no longer becomes a requirement for the installation of PRANA. Instead, run_aracne() function is available in our package as of version 1.0.5 to obtain mutual information (MI) estimate via ARACNE for network estimation step.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># library(dplyr) </span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co"># library(parallel) # To use mclapply() when reestimating the association matrix.</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># library(robustbase) # To fit a robust regression</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co"># library(minet) # To estimate network via ARACNE</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co"># Please run the following lines to install minet package </span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># from Bioconductor in your R console:</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#if (!require(&quot;BiocManager&quot;, quietly = TRUE))</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#    install.packages(&quot;BiocManager&quot;)</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#BiocManager::install(&quot;minet&quot;)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">library</span>(PRANA)</span></code></pre></div>
 <div id="example-load-the-copdgene-study-data-from-prana-r-package" class="section level3">
 <h3>Example: Load the COPDGene study data from PRANA R package:</h3>
@@ -388,34 +387,34 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># This is useful when we want to create a table with adjusted p-values only.</span></span>
 <span id="cb6-2"><a href="#cb6-2"></a><span class="kw">adjpval</span>(PRANAres)</span>
 <span id="cb6-3"><a href="#cb6-3"></a><span class="co">#&gt;        currentsmoking packyrs   age gender  race FEV1perc</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt; 10370           0.006   0.992 1.000      1 1.000        1</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt; 10370           0.000   0.998 1.000      1 1.000        1</span></span>
 <span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt; 10420           0.000   1.000 1.000      1 1.000        1</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; 1306            0.708   0.984 1.000      1 1.000        1</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; 1306            0.660   0.988 1.000      1 1.000        1</span></span>
 <span id="cb6-7"><a href="#cb6-7"></a><span class="co">#&gt; 155185          0.000   1.000 1.000      1 1.000        1</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a><span class="co">#&gt; 158158          0.874   0.998 1.000      1 1.000        1</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; 1653            0.006   0.998 1.000      1 1.000        1</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co">#&gt; 158158          0.854   1.000 1.000      1 1.000        1</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; 1653            0.000   1.000 1.000      1 1.000        1</span></span>
 <span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt; 1762            0.000   1.000 1.000      1 1.000        1</span></span>
-<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt; 23389           0.022   0.998 0.998      1 1.000        1</span></span>
-<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt; 253461          0.000   1.000 0.998      1 1.000        1</span></span>
-<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt; 26112           0.806   0.864 1.000      1 1.000        1</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt; 23389           0.012   1.000 0.998      1 1.000        1</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt; 253461          0.000   1.000 1.000      1 1.000        1</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt; 26112           0.794   0.858 1.000      1 1.000        1</span></span>
 <span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt; 27436           0.000   1.000 1.000      1 1.000        1</span></span>
-<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; 3308            0.006   0.998 1.000      1 1.000        1</span></span>
-<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; 3696            0.000   0.998 1.000      1 1.000        1</span></span>
-<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#&gt; 374739          0.000   0.998 0.998      1 0.598        1</span></span>
-<span id="cb6-18"><a href="#cb6-18"></a><span class="co">#&gt; 3842            0.006   1.000 1.000      1 1.000        1</span></span>
-<span id="cb6-19"><a href="#cb6-19"></a><span class="co">#&gt; 406             0.000   1.000 0.998      1 1.000        1</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; 3308            0.000   1.000 1.000      1 1.000        1</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; 3696            0.000   1.000 1.000      1 1.000        1</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#&gt; 374739          0.000   1.000 1.000      1 0.626        1</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">#&gt; 3842            0.000   1.000 1.000      1 1.000        1</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="co">#&gt; 406             0.000   1.000 1.000      1 1.000        1</span></span>
 <span id="cb6-20"><a href="#cb6-20"></a><span class="co">#&gt; 56986           0.000   1.000 1.000      1 1.000        1</span></span>
 <span id="cb6-21"><a href="#cb6-21"></a><span class="co">#&gt; 57188           0.000   1.000 1.000      1 1.000        1</span></span>
-<span id="cb6-22"><a href="#cb6-22"></a><span class="co">#&gt; 6239            0.460   1.000 1.000      1 1.000        1</span></span>
-<span id="cb6-23"><a href="#cb6-23"></a><span class="co">#&gt; 7067            0.000   0.992 0.998      1 0.306        1</span></span>
-<span id="cb6-24"><a href="#cb6-24"></a><span class="co">#&gt; 7871            0.000   0.998 0.998      1 1.000        1</span></span>
-<span id="cb6-25"><a href="#cb6-25"></a><span class="co">#&gt; 79961           0.006   1.000 1.000      1 1.000        1</span></span>
-<span id="cb6-26"><a href="#cb6-26"></a><span class="co">#&gt; 79991           0.000   0.998 1.000      1 1.000        1</span></span>
-<span id="cb6-27"><a href="#cb6-27"></a><span class="co">#&gt; 8224            0.000   0.998 1.000      1 1.000        1</span></span>
-<span id="cb6-28"><a href="#cb6-28"></a><span class="co">#&gt; 8853            0.000   0.998 1.000      1 1.000        1</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a><span class="co">#&gt; 6239            0.462   1.000 1.000      1 1.000        1</span></span>
+<span id="cb6-23"><a href="#cb6-23"></a><span class="co">#&gt; 7067            0.000   0.998 1.000      1 0.316        1</span></span>
+<span id="cb6-24"><a href="#cb6-24"></a><span class="co">#&gt; 7871            0.000   1.000 0.998      1 1.000        1</span></span>
+<span id="cb6-25"><a href="#cb6-25"></a><span class="co">#&gt; 79961           0.000   1.000 1.000      1 1.000        1</span></span>
+<span id="cb6-26"><a href="#cb6-26"></a><span class="co">#&gt; 79991           0.000   1.000 1.000      1 1.000        1</span></span>
+<span id="cb6-27"><a href="#cb6-27"></a><span class="co">#&gt; 8224            0.000   1.000 1.000      1 1.000        1</span></span>
+<span id="cb6-28"><a href="#cb6-28"></a><span class="co">#&gt; 8853            0.000   1.000 1.000      1 1.000        1</span></span>
 <span id="cb6-29"><a href="#cb6-29"></a><span class="co">#&gt; 8870            0.000   1.000 1.000      1 1.000        1</span></span>
-<span id="cb6-30"><a href="#cb6-30"></a><span class="co">#&gt; 9258            0.000   0.998 1.000      1 0.996        1</span></span>
-<span id="cb6-31"><a href="#cb6-31"></a><span class="co">#&gt; 9686            0.874   0.972 1.000      1 1.000        1</span></span></code></pre></div>
+<span id="cb6-30"><a href="#cb6-30"></a><span class="co">#&gt; 9258            0.000   1.000 1.000      1 0.996        1</span></span>
+<span id="cb6-31"><a href="#cb6-31"></a><span class="co">#&gt; 9686            0.854   0.976 1.000      1 1.000        1</span></span></code></pre></div>
 <p>Back to the description of the original article by Ahn <span class="math inline">\(\textit{et al.}\)</span>, the main interest is in the current smoking status to declare whether a gene is DC between current and non-current smokers at the user-specified significance level. Thus, we subset the vector of p-values for current smoking status from the <code>adjpvaltab</code> object, aka an object with adjusted p-values and gene names using <code>adjpval</code> function above.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Create an object to keep the table with adjusted p-values using adjpval() function.</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a>adjptab &lt;-<span class="st"> </span><span class="kw">adjpval</span>(PRANAres)</span></code></pre></div>
@@ -423,57 +422,57 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: Please do NOT forget to provide a name of variable with the quotation marks!</span></span>
 <span id="cb8-2"><a href="#cb8-2"></a><span class="kw">adjpval_specific_var</span>(<span class="dt">adjptab =</span> adjptab, <span class="dt">varname =</span> <span class="st">&quot;currentsmoking&quot;</span>)</span>
 <span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt;        currentsmoking</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; 10370           0.006</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; 10370           0.000</span></span>
 <span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt; 10420           0.000</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; 1306            0.708</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; 1306            0.660</span></span>
 <span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt; 155185          0.000</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; 158158          0.874</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; 1653            0.006</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; 158158          0.854</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; 1653            0.000</span></span>
 <span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt; 1762            0.000</span></span>
-<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; 23389           0.022</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; 23389           0.012</span></span>
 <span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt; 253461          0.000</span></span>
-<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt; 26112           0.806</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt; 26112           0.794</span></span>
 <span id="cb8-14"><a href="#cb8-14"></a><span class="co">#&gt; 27436           0.000</span></span>
-<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; 3308            0.006</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; 3308            0.000</span></span>
 <span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt; 3696            0.000</span></span>
 <span id="cb8-17"><a href="#cb8-17"></a><span class="co">#&gt; 374739          0.000</span></span>
-<span id="cb8-18"><a href="#cb8-18"></a><span class="co">#&gt; 3842            0.006</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a><span class="co">#&gt; 3842            0.000</span></span>
 <span id="cb8-19"><a href="#cb8-19"></a><span class="co">#&gt; 406             0.000</span></span>
 <span id="cb8-20"><a href="#cb8-20"></a><span class="co">#&gt; 56986           0.000</span></span>
 <span id="cb8-21"><a href="#cb8-21"></a><span class="co">#&gt; 57188           0.000</span></span>
-<span id="cb8-22"><a href="#cb8-22"></a><span class="co">#&gt; 6239            0.460</span></span>
+<span id="cb8-22"><a href="#cb8-22"></a><span class="co">#&gt; 6239            0.462</span></span>
 <span id="cb8-23"><a href="#cb8-23"></a><span class="co">#&gt; 7067            0.000</span></span>
 <span id="cb8-24"><a href="#cb8-24"></a><span class="co">#&gt; 7871            0.000</span></span>
-<span id="cb8-25"><a href="#cb8-25"></a><span class="co">#&gt; 79961           0.006</span></span>
+<span id="cb8-25"><a href="#cb8-25"></a><span class="co">#&gt; 79961           0.000</span></span>
 <span id="cb8-26"><a href="#cb8-26"></a><span class="co">#&gt; 79991           0.000</span></span>
 <span id="cb8-27"><a href="#cb8-27"></a><span class="co">#&gt; 8224            0.000</span></span>
 <span id="cb8-28"><a href="#cb8-28"></a><span class="co">#&gt; 8853            0.000</span></span>
 <span id="cb8-29"><a href="#cb8-29"></a><span class="co">#&gt; 8870            0.000</span></span>
 <span id="cb8-30"><a href="#cb8-30"></a><span class="co">#&gt; 9258            0.000</span></span>
-<span id="cb8-31"><a href="#cb8-31"></a><span class="co">#&gt; 9686            0.874</span></span></code></pre></div>
+<span id="cb8-31"><a href="#cb8-31"></a><span class="co">#&gt; 9686            0.854</span></span></code></pre></div>
 <p>If you would like to quickly know which genes are significantly DC for your main binary grouping variable, please use <code>sigDCGtab</code> to proceed. This will return a table with adjusted p-values and gene names.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: Please do NOT forget to provide a name of variable with the quotation marks!</span></span>
 <span id="cb9-2"><a href="#cb9-2"></a>sigDCGtab &lt;-<span class="st"> </span><span class="kw">sigDCGtab</span>(<span class="dt">adjptab =</span> adjptab, <span class="dt">groupvar =</span> <span class="st">&quot;currentsmoking&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.05</span>)</span>
 <span id="cb9-3"><a href="#cb9-3"></a>sigDCGtab</span>
 <span id="cb9-4"><a href="#cb9-4"></a><span class="co">#&gt;        currentsmoking</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; 10370           0.006</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; 10370           0.000</span></span>
 <span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; 10420           0.000</span></span>
 <span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt; 155185          0.000</span></span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; 1653            0.006</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; 1653            0.000</span></span>
 <span id="cb9-9"><a href="#cb9-9"></a><span class="co">#&gt; 1762            0.000</span></span>
-<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt; 23389           0.022</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt; 23389           0.012</span></span>
 <span id="cb9-11"><a href="#cb9-11"></a><span class="co">#&gt; 253461          0.000</span></span>
 <span id="cb9-12"><a href="#cb9-12"></a><span class="co">#&gt; 27436           0.000</span></span>
-<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt; 3308            0.006</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt; 3308            0.000</span></span>
 <span id="cb9-14"><a href="#cb9-14"></a><span class="co">#&gt; 3696            0.000</span></span>
 <span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt; 374739          0.000</span></span>
-<span id="cb9-16"><a href="#cb9-16"></a><span class="co">#&gt; 3842            0.006</span></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="co">#&gt; 3842            0.000</span></span>
 <span id="cb9-17"><a href="#cb9-17"></a><span class="co">#&gt; 406             0.000</span></span>
 <span id="cb9-18"><a href="#cb9-18"></a><span class="co">#&gt; 56986           0.000</span></span>
 <span id="cb9-19"><a href="#cb9-19"></a><span class="co">#&gt; 57188           0.000</span></span>
 <span id="cb9-20"><a href="#cb9-20"></a><span class="co">#&gt; 7067            0.000</span></span>
 <span id="cb9-21"><a href="#cb9-21"></a><span class="co">#&gt; 7871            0.000</span></span>
-<span id="cb9-22"><a href="#cb9-22"></a><span class="co">#&gt; 79961           0.006</span></span>
+<span id="cb9-22"><a href="#cb9-22"></a><span class="co">#&gt; 79961           0.000</span></span>
 <span id="cb9-23"><a href="#cb9-23"></a><span class="co">#&gt; 79991           0.000</span></span>
 <span id="cb9-24"><a href="#cb9-24"></a><span class="co">#&gt; 8224            0.000</span></span>
 <span id="cb9-25"><a href="#cb9-25"></a><span class="co">#&gt; 8853            0.000</span></span>
@@ -486,13 +485,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb10-4"><a href="#cb10-4"></a><span class="co">#&gt;  [1] &quot;10370&quot;  &quot;10420&quot;  &quot;155185&quot; &quot;1653&quot;   &quot;1762&quot;   &quot;23389&quot;  &quot;253461&quot; &quot;27436&quot; </span></span>
 <span id="cb10-5"><a href="#cb10-5"></a><span class="co">#&gt;  [9] &quot;3308&quot;   &quot;3696&quot;   &quot;374739&quot; &quot;3842&quot;   &quot;406&quot;    &quot;56986&quot;  &quot;57188&quot;  &quot;7067&quot;  </span></span>
 <span id="cb10-6"><a href="#cb10-6"></a><span class="co">#&gt; [17] &quot;7871&quot;   &quot;79961&quot;  &quot;79991&quot;  &quot;8224&quot;   &quot;8853&quot;   &quot;8870&quot;   &quot;9258&quot;</span></span></code></pre></div>
-<p>As an additional step, we can use <code>rename_genes</code> function from <code>dnapath</code> dependency package to rename Entrez gene IDs into gene symbols.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>dnapath<span class="op">::</span><span class="kw">rename_genes</span>(sigDCGnames, <span class="dt">to =</span> <span class="st">&quot;symbol&quot;</span>, <span class="dt">species =</span> <span class="st">&quot;human&quot;</span>)</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="co">#&gt;  - saving gene info to /var/folders/6q/jpl685v542nbdz7xfc78hdsh0000gn/T//RtmpuXU6q1/entrez_to_hsapiens.rds</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt;  [1] &quot;CITED2&quot;   &quot;TESK2&quot;    &quot;AMZ1&quot;     &quot;DDX1&quot;     &quot;DMWD&quot;     &quot;MED13L&quot;  </span></span>
-<span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt;  [7] &quot;ZBTB38&quot;   &quot;EML4&quot;     &quot;HSPA4&quot;    &quot;ITGB8&quot;    &quot;TEPP&quot;     &quot;TNPO1&quot;   </span></span>
-<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; [13] &quot;BMAL1&quot;    &quot;DTWD1&quot;    &quot;ADAMTSL3&quot; &quot;THRA&quot;     &quot;SLMAP&quot;    &quot;DENND2D&quot; </span></span>
-<span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt; [19] &quot;STN1&quot;     &quot;SYN3&quot;     &quot;ASAP2&quot;    &quot;IER3&quot;     &quot;MFHAS1&quot;</span></span></code></pre></div>
+<p>As an additional step, we can use <code>rename_genes</code> function to rename Entrez gene IDs into gene symbols. However, it is currently not available since <code>dnapath</code> package is currently archived. A user may manually install the archived version of <code>dnapath</code> from the CRAN, and follow the R code below.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co">#rename_genes(sigDCGnames, to = &quot;symbol&quot;, species = &quot;human&quot;)</span></span></code></pre></div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>

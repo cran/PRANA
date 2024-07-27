@@ -6,7 +6,6 @@ knitr::opts_chunk$set(
 )
 
 ## -----------------------------------------------------------------------------
-# library(dnapath) # To obtain mutual information (MI) estimate via ARACNE.
 # library(dplyr) 
 # library(parallel) # To use mclapply() when reestimating the association matrix.
 # library(robustbase) # To fit a robust regression
@@ -64,5 +63,5 @@ sigDCGnames <- sigDCGnames(adjptab = adjptab, groupvar = "currentsmoking", alpha
 sigDCGnames
 
 ## -----------------------------------------------------------------------------
-dnapath::rename_genes(sigDCGnames, to = "symbol", species = "human")
+#rename_genes(sigDCGnames, to = "symbol", species = "human")
 

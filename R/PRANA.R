@@ -1,7 +1,7 @@
 #' @title PRANA
 #'
 #' @description A pseudo-value regression approach for differential network analysis
-#'     that adjusts for additional covariates (PRANA)
+#'     that adjusts for additional covariates (PRANA).
 #'
 #' @param RNASeqdat An RNA-Seq data with subjects in rows and genes in columns.
 #' @param clindat A data with clinical variables to be included in the regression
@@ -37,7 +37,6 @@
 #' PRANAres <- PRANA(RNASeqdat = rnaseqdat, clindat = phenodat,
 #' groupA = index_grpA, groupB = index_grpB)
 #' @export
-#' @import dnapath
 #' @import dplyr
 #' @import parallel
 #' @import robustbase

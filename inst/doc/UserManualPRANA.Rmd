@@ -1,7 +1,7 @@
 ---
 title: "A User Manual for PRANA"
 author: "Seungjun Ahn"
-date: "September 15th, 2023"
+date: "July 22nd, 2024 (Version 1.0.5)"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{UserManualPRANA}
@@ -20,9 +20,8 @@ knitr::opts_chunk$set(
 ```
 
 ## Requirements
-Please install these R packages prior to use PRANA. Note that minet package is available in Bioconductor. Please see below for further instruction.
+Please install these R packages prior to use PRANA. Note that minet package is available in Bioconductor. Please see below for further instruction. Of important note (as of July 2024), dnapath R package is archived in CRAN as of May 2024, which no longer becomes a requirement for the installation of PRANA. Instead, run_aracne() function is available in our package as of version 1.0.5 to obtain mutual information (MI) estimate via ARACNE for network estimation step. 
 ```{r}
-# library(dnapath) # To obtain mutual information (MI) estimate via ARACNE.
 # library(dplyr) 
 # library(parallel) # To use mclapply() when reestimating the association matrix.
 # library(robustbase) # To fit a robust regression
@@ -103,9 +102,9 @@ sigDCGnames <- sigDCGnames(adjptab = adjptab, groupvar = "currentsmoking", alpha
 sigDCGnames
 ```
 
-As an additional step, we can use `rename_genes` function from `dnapath` dependency package to rename Entrez gene IDs into gene symbols.
+As an additional step, we can use `rename_genes` function to rename Entrez gene IDs into gene symbols. However, it is currently not available since `dnapath` package is currently archived. A user may manually install the archived version of `dnapath` from the CRAN, and follow the R code below.
 ```{r}
-dnapath::rename_genes(sigDCGnames, to = "symbol", species = "human")
+#rename_genes(sigDCGnames, to = "symbol", species = "human")
 ```
 \newpage
 ## References
