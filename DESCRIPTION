@@ -1,7 +1,7 @@
 Package: PRANA
 Type: Package
 Title: Pseudo-Value Regression Approach for Network Analysis (PRANA)
-Version: 1.0.5
+Version: 1.0.6
 Authors@R: c(
 	person("Seungjun", "Ahn", email = "seungjun.ahn@mountsinai.org",
 		 role = c("cre", "aut", "trl"),
@@ -20,9 +20,9 @@ Language: en-US
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2024-07-22 21:17:40 UTC; seungjunahn
+Packaged: 2024-09-22 19:26:01 UTC; seungjunahn
 Author: Seungjun Ahn [cre, aut, trl] (<https://orcid.org/0000-0002-4816-8924>),
   Somnath Datta [ctb, ths]
 Maintainer: Seungjun Ahn <seungjun.ahn@mountsinai.org>
 Repository: CRAN
-Date/Publication: 2024-07-27 16:20:12 UTC
+Date/Publication: 2024-09-22 19:50:07 UTC

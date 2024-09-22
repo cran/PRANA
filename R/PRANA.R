@@ -103,7 +103,7 @@ PRANA <- function(RNASeqdat, clindat, groupA, groupB) {
                 m <- thetatilde[, i]
                 df <- data.frame(clindat,
                                  m = m)
-                fit <- ltsReg(m ~currentsmoking + packyrs + age + gender + race + FEV1perc, data = df, mcd=FALSE) # Include a set of covariates to be regressed.
+                fit <- ltsReg(m ~., data = df, mcd=FALSE) # Include a set of covariates to be regressed.
                 return(fit)
         })
 
